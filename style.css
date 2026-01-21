@@ -1,0 +1,147 @@
+body {
+  box-sizing: border-box;
+  font-family: "Tajawal", sans-serif;
+}
+
+.code-input {
+  width: calc(1.5rem + 5vw);
+  height: calc(1.5rem + 5vw);
+  text-align: center;
+  font-size: calc(1rem + 2vw);
+  font-weight: 700;
+  border: 3px solid #e0e7ff;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  transition: all 0.3s ease;
+  color: #1e1b4b;
+}
+
+.min-h-full {
+  padding: calc(0.3rem + 1vw);
+}
+
+.code-input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+  transform: scale(1.05);
+}
+
+.code-input.error {
+  border-color: #ef4444;
+  animation: shake 0.5s ease-in-out;
+}
+
+.code-input.success {
+  border-color: #10b981;
+  background: #d1fae5;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-10px);
+  }
+  75% {
+    transform: translateX(10px);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(99, 102, 241, 0.6);
+  }
+}
+
+.floating {
+  animation: float 3s ease-in-out infinite;
+}
+
+.glow-btn {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 2rem !important;
+  width: calc(20rem + 25vw) !important;
+  transition: all 0.3s linear;
+}
+
+.side-btn {
+  position: fixed;
+  left: 0;
+  top: 12%;
+  transform: translateY(-50%);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+.confetti {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+@keyframes success-pop {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.success-animation {
+  animation: success-pop 0.5s ease-out forwards;
+}
+
+@media (max-width: 500px) {
+  .glass-card {
+    width: calc(18rem + 20vw) !important;
+  }
+}

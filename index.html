@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>لعبة الرقم السري</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/_sdk/element_sdk.js"></script>
+    <script src="/_sdk/data_sdk.js"></script>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+      @view-transition {
+        navigation: auto;
+      }
+    </style>
+  </head>
+
+  <body class="h-full gradient-bg">
+    <div id="app-container" class="h-full overflow-auto">
+      <!-- زر تغيير الرقم -->
+      <button
+        id="change-code-btn"
+        class="side-btn bg-gradient-to-b from-amber-400 to-orange-500 text-white px-3 py-6 rounded-r-2xl shadow-2xl hover:from-amber-500 hover:to-orange-600 transition-all duration-300 font-bold text-sm z-50"
+      >
+        ⚙️ تغيير الرقم
+      </button>
+
+      <!-- الصفحة الرئيسية -->
+      <div
+        id="main-page"
+        class="min-h-full flex flex-col items-center justify-center"
+      >
+        <div class="text-center mb-10 floating">
+          <div class="text-6xl mb-4">🔐</div>
+          <h1
+            id="game-title"
+            class="text-4xl md:text-5xl font-extrabold text-white mb-3 drop-shadow-lg"
+          >
+            لعبة الرقم السري
+          </h1>
+          <p class="text-indigo-200 text-lg">
+            أدخل الرقم السري المكون من 6 أرقام
+          </p>
+        </div>
+
+        <div
+          class="glass-card rounded-3xl  shadow-2xl w-full"
+        >
+          <div
+            id="code-inputs"
+            class="flex justify-center gap-3 mb-8"
+            dir="ltr"
+          >
+            <input
+              type="text"
+              maxlength="1"
+              class="code-input"
+              data-index="0"
+            />
+            <input
+              type="text"
+              maxlength="1"
+              class="code-input"
+              data-index="1"
+            />
+            <input
+              type="text"
+              maxlength="1"
+              class="code-input"
+              data-index="2"
+            />
+            <input
+              type="text"
+              maxlength="1"
+              class="code-input"
+              data-index="3"
+            />
+            <input
+              type="text"
+              maxlength="1"
+              class="code-input"
+              data-index="4"
+            />
+            <input
+              type="text"
+              maxlength="1"
+              class="code-input"
+              data-index="5"
+            />
+          </div>
+
+          <div id="error-message" class="text-center mb-6 hidden">
+            <p id="lose-text" class="text-red-500 font-bold text-xl">
+              😢 للأسف خسرت اللعبة!
+            </p>
+          </div>
+
+          <button
+            id="verify-btn"
+            class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 rounded-2xl font-bold text-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 glow-btn"
+          >
+            🔓 تحقق من الرقم
+          </button>
+
+          <button
+            id="retry-btn"
+            class="w-full mt-4 bg-gradient-to-r from-gray-500 to-gray-600 text-white py-3 rounded-2xl font-bold text-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-300 hidden"
+          >
+            🔄 حاول مرة أخرى
+          </button>
+        </div>
+      </div>
+
+      <!-- صفحة تغيير الرقم -->
+      <div
+        id="settings-page"
+        class="min-h-full flex flex-col items-center justify-center p-6 hidden"
+      >
+        <div class="text-center mb-10 floating">
+          <div class="text-6xl mb-4">⚙️</div>
+          <h2 class="text-4xl font-extrabold text-white mb-3 drop-shadow-lg">
+            تغيير الرقم السري
+          </h2>
+          <p class="text-indigo-200 text-lg">أدخل الرمز القديم ثم الجديد</p>
+        </div>
+
+        <div
+          class="glass-card rounded-3xl p-8 md:p-12 shadow-2xl w-full"
+        >
+          <!-- الرمز القديم -->
+          <div class="mb-6">
+            <p class="text-indigo-700 font-bold mb-2">الرمز القديم:</p>
+            <input
+              id="old-code-input"
+              type="password"
+              class="w-full code-input text-center"
+              maxlength="6"
+              inputmode="numeric"
+            />
+          </div>
+
+          <div id="old-code-error" class="text-center mb-4 hidden">
+            <p class="text-red-500 font-bold text-lg">
+              ❌ الرمز القديم غير صحيح
+            </p>
+          </div>
+
+          <!-- الرمز الجديد -->
+          <p class="text-indigo-700 font-bold mb-2">الرمز الجديد:</p>
+          <div
+            id="new-code-inputs"
+            class="flex justify-center gap-3 mb-8"
+            dir="ltr"
+          >
+            <input
+              type="text"
+              maxlength="1"
+              class="code-input"
+              data-index="0"
+            />
+            <input
+              type="text"
+              maxlength="1"
+              class="code-input"
+              data-index="1"
+            />
+            <input
+              type="text"
+              maxlength="1"
+              class="code-input"
+              data-index="2"
+            />
+            <input
+              type="text"
+              maxlength="1"
+              class="code-input"
+              data-index="3"
+            />
+            <input
+              type="text"
+              maxlength="1"
+              class="code-input"
+              data-index="4"
+            />
+            <input
+              type="text"
+              maxlength="1"
+              class="code-input"
+              data-index="5"
+            />
+          </div>
+
+          <div id="save-success" class="text-center mb-4 hidden">
+            <p class="text-emerald-500 font-bold text-lg">
+              ✅ تم حفظ الرقم الجديد بنجاح!
+            </p>
+          </div>
+
+          <div class="flex gap-4">
+            <button
+              id="save-code-btn"
+              class="flex-1 bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-4 rounded-2xl font-bold text-xl hover:from-emerald-600 hover:to-teal-600 transition-all duration-300"
+            >
+              💾 حفظ
+            </button>
+
+            <button
+              id="back-btn"
+              class="flex-1 bg-gradient-to-r from-gray-500 to-gray-600 text-white py-4 rounded-2xl font-bold text-xl hover:from-gray-600 hover:to-gray-700 transition-all duration-300"
+            >
+              🔙 رجوع
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- نافذة الفوز -->
+      <div
+        id="success-modal"
+        class="fixed inset-0 modal-overlay flex items-center justify-center z-50 hidden"
+      >
+        <div
+          class="glass-card rounded-3xl p-10 max-w-md w-full mx-4 text-center success-animation"
+        >
+          <div class="text-8xl mb-6">🎉</div>
+          <h2
+            id="win-text"
+            class="text-3xl font-extrabold text-indigo-800 mb-4"
+          >
+            مبروك! لقد فزت!
+          </h2>
+          <p class="text-indigo-600 text-lg mb-8">
+            لقد أدخلت الرقم السري الصحيح
+          </p>
+          <button
+            id="play-again-btn"
+            class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-bold text-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300"
+          >
+            🎮 العب مرة أخرى
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
