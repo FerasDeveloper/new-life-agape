@@ -11,8 +11,9 @@ const defaultConfig = {
 };
 
 let config = { ...defaultConfig };
-let secretCode = '123123';
+const LOCAL_STORAGE_KEY = 'secretCode';
 let storedData = [];
+let secretCode = localStorage.getItem(LOCAL_STORAGE_KEY) || '123123';
 
 // Data SDK Handler
 const dataHandler = {
@@ -21,8 +22,11 @@ const dataHandler = {
     if (data.length > 0) {
       const latestCode = data[data.length - 1];
       if (latestCode.secret_code) {
-        secretCode = latestCode.secret_code;
-        updateCurrentCodeDisplay();
+        // Only apply SDK value if there's no value in localStorage
+        if (!localStorage.getItem(LOCAL_STORAGE_KEY)) {
+          secretCode = latestCode.secret_code;
+          updateCurrentCodeDisplay();
+        }
       }
     }
   }
@@ -277,6 +281,12 @@ saveCodeBtn.addEventListener('click', async () => {
 
     if (result.isOk) {
       secretCode = newCode;
+      // persist to localStorage so future checks prefer it
+      try {
+        localStorage.setItem(LOCAL_STORAGE_KEY, newCode);
+      } catch (e) {
+        console.warn('Could not write secret to localStorage', e);
+      }
       saveSuccess.classList.remove('hidden');
       newCodeInputs.forEach(input => input.classList.add('success'));
       updateCurrentCodeDisplay();
@@ -287,6 +297,11 @@ saveCodeBtn.addEventListener('click', async () => {
     }
   } else {
     secretCode = newCode;
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY, newCode);
+    } catch (e) {
+      console.warn('Could not write secret to localStorage', e);
+    }
     saveSuccess.classList.remove('hidden');
     updateCurrentCodeDisplay();
   }
