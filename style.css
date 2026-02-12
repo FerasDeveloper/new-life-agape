@@ -37,6 +37,14 @@ body {
   background: #d1fae5;
 }
 
+.code-length-btn {
+  transition: all 0.2s ease;
+}
+.code-length-btn:hover {
+  border-color: #6366f1;
+  background: rgba(99, 102, 241, 0.1);
+}
+
 @keyframes shake {
   0%,
   100% {

@@ -46,7 +46,7 @@
           >
             لعبة الرقم السري
           </h1>
-          <p class="text-indigo-200 text-lg">
+          <p id="code-length-hint" class="text-indigo-200 text-lg">
             أدخل الرقم السري المكون من 6 أرقام
           </p>
         </div>
@@ -56,45 +56,10 @@
         >
           <div
             id="code-inputs"
-            class="flex justify-center gap-3 mb-8"
+            class="flex justify-center gap-3 mb-8 flex-wrap"
             dir="ltr"
           >
-            <input
-              type="text"
-              maxlength="1"
-              class="code-input"
-              data-index="0"
-            />
-            <input
-              type="text"
-              maxlength="1"
-              class="code-input"
-              data-index="1"
-            />
-            <input
-              type="text"
-              maxlength="1"
-              class="code-input"
-              data-index="2"
-            />
-            <input
-              type="text"
-              maxlength="1"
-              class="code-input"
-              data-index="3"
-            />
-            <input
-              type="text"
-              maxlength="1"
-              class="code-input"
-              data-index="4"
-            />
-            <input
-              type="text"
-              maxlength="1"
-              class="code-input"
-              data-index="5"
-            />
+            <!-- inputs created by script.js based on code length -->
           </div>
 
           <div id="error-message" class="text-center mb-6 hidden">
@@ -135,6 +100,17 @@
         <div
           class="glass-card rounded-3xl p-8 md:p-12 shadow-2xl w-full"
         >
+          <!-- عدد الأرقام -->
+          <div class="mb-6">
+            <p class="text-indigo-700 font-bold mb-2">عدد الأرقام:</p>
+            <div id="code-length-btns" class="flex gap-2 flex-wrap justify-center">
+              <button type="button" class="code-length-btn px-4 py-2 rounded-xl font-bold border-2 border-indigo-200" data-length="4">4</button>
+              <button type="button" class="code-length-btn px-4 py-2 rounded-xl font-bold border-2 border-indigo-200" data-length="5">5</button>
+              <button type="button" class="code-length-btn px-4 py-2 rounded-xl font-bold border-2 border-indigo-200" data-length="6">6</button>
+              <button type="button" class="code-length-btn px-4 py-2 rounded-xl font-bold border-2 border-indigo-200" data-length="8">8</button>
+            </div>
+          </div>
+
           <!-- الرمز القديم -->
           <div class="mb-6">
             <p class="text-indigo-700 font-bold mb-2">الرمز القديم:</p>
@@ -142,7 +118,6 @@
               id="old-code-input"
               type="password"
               class="w-full code-input text-center"
-              maxlength="6"
               inputmode="numeric"
             />
           </div>
@@ -157,45 +132,10 @@
           <p class="text-indigo-700 font-bold mb-2">الرمز الجديد:</p>
           <div
             id="new-code-inputs"
-            class="flex justify-center gap-3 mb-8"
+            class="flex justify-center gap-3 mb-8 flex-wrap"
             dir="ltr"
           >
-            <input
-              type="text"
-              maxlength="1"
-              class="code-input"
-              data-index="0"
-            />
-            <input
-              type="text"
-              maxlength="1"
-              class="code-input"
-              data-index="1"
-            />
-            <input
-              type="text"
-              maxlength="1"
-              class="code-input"
-              data-index="2"
-            />
-            <input
-              type="text"
-              maxlength="1"
-              class="code-input"
-              data-index="3"
-            />
-            <input
-              type="text"
-              maxlength="1"
-              class="code-input"
-              data-index="4"
-            />
-            <input
-              type="text"
-              maxlength="1"
-              class="code-input"
-              data-index="5"
-            />
+            <!-- inputs created by script.js based on code length -->
           </div>
 
           <div id="save-success" class="text-center mb-4 hidden">

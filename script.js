@@ -12,8 +12,28 @@ const defaultConfig = {
 
 let config = { ...defaultConfig };
 const LOCAL_STORAGE_KEY = 'secretCode';
+const CODE_LENGTH_KEY = 'secretCodeLength';
+const ALLOWED_LENGTHS = [4, 5, 6, 8];
+const DEFAULT_CODE_LENGTH = 6;
+
+function getCodeLength() {
+  const stored = localStorage.getItem(CODE_LENGTH_KEY);
+  const n = parseInt(stored, 10);
+  return ALLOWED_LENGTHS.includes(n) ? n : DEFAULT_CODE_LENGTH;
+}
+
+let codeLength = getCodeLength();
 let storedData = [];
-let secretCode = localStorage.getItem(LOCAL_STORAGE_KEY) || '123123';
+let secretCode = (() => {
+  const raw = localStorage.getItem(LOCAL_STORAGE_KEY) || '123123';
+  return normalizeSecretToLength(raw, codeLength);
+})();
+
+function normalizeSecretToLength(code, len) {
+  const digits = code.replace(/[^0-9]/g, '');
+  if (digits.length >= len) return digits.slice(0, len);
+  return digits.padEnd(len, '0');
+}
 
 // Data SDK Handler
 const dataHandler = {
@@ -24,7 +44,7 @@ const dataHandler = {
       if (latestCode.secret_code) {
         // Only apply SDK value if there's no value in localStorage
         if (!localStorage.getItem(LOCAL_STORAGE_KEY)) {
-          secretCode = latestCode.secret_code;
+          secretCode = normalizeSecretToLength(String(latestCode.secret_code), codeLength);
           updateCurrentCodeDisplay();
         }
       }
@@ -88,8 +108,8 @@ if (window.elementSdk) {
 // DOM Elements
 const mainPage = document.getElementById('main-page');
 const settingsPage = document.getElementById('settings-page');
-const codeInputs = document.querySelectorAll('#code-inputs .code-input');
-const newCodeInputs = document.querySelectorAll('#new-code-inputs .code-input');
+let codeInputs = [];
+let newCodeInputs = [];
 const verifyBtn = document.getElementById('verify-btn');
 const retryBtn = document.getElementById('retry-btn');
 const changeCodeBtn = document.getElementById('change-code-btn');
@@ -100,9 +120,43 @@ const successModal = document.getElementById('success-modal');
 const playAgainBtn = document.getElementById('play-again-btn');
 const saveSuccess = document.getElementById('save-success');
 const currentCodeDisplay = document.getElementById('current-code');
-
+const codeLengthHint = document.getElementById('code-length-hint');
 const oldCodeInput = document.getElementById('old-code-input');
 const oldCodeError = document.getElementById('old-code-error');
+
+function createCodeInputsIn(containerId, length) {
+  const container = document.getElementById(containerId);
+  if (!container) return [];
+  container.innerHTML = '';
+  for (let i = 0; i < length; i++) {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.maxLength = 1;
+    input.className = 'code-input';
+    input.dataset.index = String(i);
+    container.appendChild(input);
+  }
+  return container.querySelectorAll('.code-input');
+}
+
+function refreshAllCodeInputs() {
+  codeInputs = createCodeInputsIn('code-inputs', codeLength);
+  newCodeInputs = createCodeInputsIn('new-code-inputs', codeLength);
+  setupInputNavigation(codeInputs);
+  setupInputNavigation(newCodeInputs);
+  if (codeLengthHint) codeLengthHint.textContent = `أدخل الرقم السري المكون من ${codeLength} أرقام`;
+  if (oldCodeInput) oldCodeInput.maxLength = codeLength;
+  updateCodeLengthButtons();
+}
+
+function updateCodeLengthButtons() {
+  document.querySelectorAll('.code-length-btn').forEach((btn) => {
+    const len = parseInt(btn.dataset.length, 10);
+    btn.classList.toggle('border-indigo-600', len === codeLength);
+    btn.classList.toggle('bg-indigo-100', len === codeLength);
+    btn.classList.toggle('text-indigo-700', len === codeLength);
+  });
+}
 
 // Update current code display
 function updateCurrentCodeDisplay() {
@@ -134,7 +188,7 @@ function setupInputNavigation(inputs) {
       const pastedData = e.clipboardData
         .getData('text')
         .replace(/[^0-9]/g, '')
-        .slice(0, 6);
+        .slice(0, inputs.length);
       const chars = pastedData.split('');
       inputs.forEach((inp, i) => {
         inp.value = chars[i] || '';
@@ -143,8 +197,7 @@ function setupInputNavigation(inputs) {
   });
 }
 
-setupInputNavigation(codeInputs);
-setupInputNavigation(newCodeInputs);
+// Code inputs are created in refreshAllCodeInputs() after DOM is ready
 
 // Get code from inputs
 function getCodeFromInputs(inputs) {
@@ -185,7 +238,7 @@ function createConfetti() {
 verifyBtn.addEventListener('click', () => {
   const enteredCode = getCodeFromInputs(codeInputs);
 
-  if (enteredCode.length !== 6) {
+  if (enteredCode.length !== codeLength) {
     codeInputs.forEach(input => input.classList.add('error'));
     setTimeout(() => codeInputs.forEach(input => input.classList.remove('error')), 500);
     return;
@@ -263,7 +316,7 @@ saveCodeBtn.addEventListener('click', async () => {
   if (oldCodeError) oldCodeError.classList.add('hidden');
 
   // Validate new code
-  if (newCode.length !== 6) {
+  if (newCode.length !== codeLength) {
     newCodeInputs.forEach(input => input.classList.add('error'));
     setTimeout(() => newCodeInputs.forEach(input => input.classList.remove('error')), 500);
     return;
@@ -310,7 +363,33 @@ saveCodeBtn.addEventListener('click', async () => {
   saveCodeBtn.textContent = '💾 حفظ';
 });
 
+// Code length selector
+document.querySelectorAll('.code-length-btn').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const newLen = parseInt(btn.dataset.length, 10);
+    if (newLen === codeLength || !ALLOWED_LENGTHS.includes(newLen)) return;
+    codeLength = newLen;
+    try {
+      localStorage.setItem(CODE_LENGTH_KEY, String(codeLength));
+    } catch (e) {
+      console.warn('Could not save code length to localStorage', e);
+    }
+    secretCode = normalizeSecretToLength(secretCode, codeLength);
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY, secretCode);
+    } catch (e) {
+      console.warn('Could not write secret to localStorage', e);
+    }
+    refreshAllCodeInputs();
+    updateCurrentCodeDisplay();
+    clearInputs(newCodeInputs);
+    if (oldCodeInput) oldCodeInput.value = '';
+    if (oldCodeError) oldCodeError.classList.add('hidden');
+  });
+});
+
 // Initialize
 initDataSDK();
+refreshAllCodeInputs();
 updateCurrentCodeDisplay();
-codeInputs[0].focus();
+if (codeInputs.length > 0) codeInputs[0].focus();
