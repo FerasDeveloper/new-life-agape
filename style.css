@@ -153,3 +153,7 @@ body {
     width: calc(18rem + 20vw) !important;
   }
 }
+
+.nothing {
+  color: #000;
+}
